@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pente", "Pente\Pente.csproj", "{A5A9AB16-BB73-4364-ABAF-0EC9F810EC1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5A9AB16-BB73-4364-ABAF-0EC9F810EC1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5A9AB16-BB73-4364-ABAF-0EC9F810EC1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5A9AB16-BB73-4364-ABAF-0EC9F810EC1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5A9AB16-BB73-4364-ABAF-0EC9F810EC1F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7AF8EF1-CD85-4879-8914-78CCBBE94DE2}
+	EndGlobalSection
+EndGlobal
