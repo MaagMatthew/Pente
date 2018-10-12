@@ -25,6 +25,7 @@ namespace Pente.XAML
             DefineRows();
             DefineColumns();
             AddCanvasToEachSpace();
+            //gameBoard.ShowGridLines = true;
         }
 
 
@@ -52,26 +53,28 @@ namespace Pente.XAML
             {
                 for(int j = 0; j < rows; j++)
                 {
-                    Canvas canvas = new Canvas();
-                    Grid.SetColumn(canvas, i);
-                    Grid.SetRow(canvas, j);
-                    Grid.SetColumnSpan(canvas, 1);
-                    Grid.SetRowSpan(canvas, 1);
-                    canvas.Name = "col" + i + "row" + j;
+                    Border b = new Border();
+                    Grid.SetColumn(b, i);
+                    Grid.SetRow(b, j);
+                    Grid.SetColumnSpan(b, 1);
+                    Grid.SetRowSpan(b, 1);
+                    b.BorderBrush = Brushes.Brown;
+                    b.BorderThickness = new Thickness(1);
 
-                    //Border border = new Border();
-                    //border.BorderThickness = new Thickness(1);
-                    //border.BorderBrush = Brushes.Brown;
-
-                    //canvas.Children.Add(border);
+                    Canvas c = new Canvas();
+                    Grid.SetColumn(c, i);
+                    Grid.SetRow(c, j);
+                    Grid.SetColumnSpan(c, 1);
+                    Grid.SetRowSpan(c, 1);
+                    c.Name = "col" + i + "row" + j;
 
                     if (i == 20 || i == 0 || j == 0 || j == 20)
                     {
-                        canvas.Background = Brushes.DarkSeaGreen;
+                        c.Background = Brushes.DarkSeaGreen;
                     }
                     else
                     {
-                        canvas.Background = Brushes.DarkOrange;
+                        c.Background = Brushes.DarkOrange;
                     }
 
                     //if (canvas.Name == "col10row15")
@@ -79,7 +82,12 @@ namespace Pente.XAML
                     //    canvas.Background = Brushes.DarkRed;
                     //}
 
-                    gameBoard.Children.Add(canvas);
+                    gameBoard.Children.Add(c);
+
+                    if (i < 20 && i > 0 && j > 0 && j < 20)
+                    {
+                        gameBoard.Children.Add(b);
+                    }
                 }
             }
         }
