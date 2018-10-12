@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pente.XAML;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace Pente
         public MainWindow()
         {
             InitializeComponent();
+            boardView.Children.Add(new GameBoard());
         }
     }
 }
