@@ -71,6 +71,7 @@ namespace Pente.XAML
 
                     c.Background = Brushes.DarkOrange;
 
+                    //Each Canvas has a Name like "col" "10" "row" "15" (Example Below, Uncomment to see Example on Run) 
                     //if (canvas.Name == "col10row15")
                     //{
                     //    canvas.Background = Brushes.DarkRed;
