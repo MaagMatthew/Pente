@@ -8,9 +8,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Pente.XAML
 {
@@ -19,19 +19,20 @@ namespace Pente.XAML
     /// </summary>
     public partial class GameBoard : UserControl
     {
+        public bool IsFirstPalyer { get; set; }
         public GameBoard()
         {
             InitializeComponent();
             DefineRows();
             DefineColumns();
             AddCanvasToEachSpace();
-            //gameBoard.ShowGridLines = true;
+            IsFirstPalyer = true;
         }
 
-
+        #region Creating Board
         private void DefineRows()
         {
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 19; i++)
             {
                 gameBoard.RowDefinitions.Add(new RowDefinition());
             }
@@ -39,7 +40,7 @@ namespace Pente.XAML
 
         private void DefineColumns()
         {
-            for (int i = 0; i < 21; i++)
+            for (int i = 0; i < 19; i++)
             {
                 gameBoard.ColumnDefinitions.Add(new ColumnDefinition());
             }
@@ -51,7 +52,7 @@ namespace Pente.XAML
 
             for (int i = 0; i < columns; i++)
             {
-                for(int j = 0; j < rows; j++)
+                for (int j = 0; j < rows; j++)
                 {
                     Border b = new Border();
                     Grid.SetColumn(b, i);
@@ -68,14 +69,7 @@ namespace Pente.XAML
                     Grid.SetRowSpan(c, 1);
                     c.Name = "col" + i + "row" + j;
 
-                    if (i == 20 || i == 0 || j == 0 || j == 20)
-                    {
-                        c.Background = Brushes.DarkSeaGreen;
-                    }
-                    else
-                    {
-                        c.Background = Brushes.DarkOrange;
-                    }
+                    c.Background = Brushes.DarkOrange;
 
                     //if (canvas.Name == "col10row15")
                     //{
@@ -83,12 +77,69 @@ namespace Pente.XAML
                     //}
 
                     gameBoard.Children.Add(c);
-
-                    if (i < 20 && i > 0 && j > 0 && j < 20)
-                    {
-                        gameBoard.Children.Add(b);
-                    }
                 }
+            }
+        }
+        #endregion
+
+        private void LeftButtonPlace(object sender, MouseButtonEventArgs e)
+        {
+            var selectedCanvas = e.Source as Canvas;
+
+            if (selectedCanvas != null)
+            {
+                if (selectedCanvas.Children.Count < 1)
+                {
+                    int column = Grid.GetColumn(selectedCanvas);
+                    int row = Grid.GetRow(selectedCanvas);
+
+                    Ellipse shape = new Ellipse()
+                    {
+                        Height = 20,
+                        Width = 20,
+                    };
+
+                    if (IsFirstPalyer)
+                    {
+                        shape.Fill = Brushes.Aqua;
+                        IsFirstPalyer = !IsFirstPalyer;
+                    }
+                    else
+                    {
+                        shape.Fill = Brushes.Yellow;
+                        IsFirstPalyer = !IsFirstPalyer;
+                    }
+                    double left = shape.Width / 2;
+                    double top = shape.Height / 2;
+                    shape.Margin = new Thickness(left, top, 0, 0);
+                    selectedCanvas.Children.Add(shape);
+                }
+            }
+        }
+
+        private void RightButtonRemove(object sender, MouseButtonEventArgs e)
+        {
+            var selectedCanvas = e.Source as Canvas;
+            var selectedShape = e.Source as Shape;
+            if (selectedCanvas != null)
+            {
+                selectedCanvas.Children.Clear();
+            }
+            else if (selectedShape != null)
+            {
+                var parentOf = selectedShape.Parent as Canvas;
+                if (parentOf != null)
+                {
+                    parentOf.Children.Remove(selectedShape);
+                }
+            }
+        }
+
+        private void RemoveShapeCanvas(object sender, MouseButtonEventArgs e)
+        {
+            Shape clicked = e.OriginalSource as Shape;
+            if (clicked != null)
+            {
             }
         }
     }
