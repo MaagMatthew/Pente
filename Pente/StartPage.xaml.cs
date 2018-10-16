@@ -26,9 +26,9 @@ namespace Pente
 
         private void PlayGame(object sender, RoutedEventArgs e)
         {
-            MainWindow main = new MainWindow();
+            Settings settings = new Settings();
             this.Visibility = Visibility.Hidden;
-            main.ShowDialog();
+            settings.ShowDialog();
             this.Visibility = Visibility.Hidden;
         }
 

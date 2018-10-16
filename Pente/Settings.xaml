@@ -1,0 +1,22 @@
+﻿<Window x:Class="Pente.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Pente"
+        mc:Ignorable="d"
+        Title="Settings" WindowStyle="None" WindowState="Maximized">
+    <StackPanel>
+        <TextBlock Text="Settings"></TextBlock>
+        <TextBlock Text="First Player Name"></TextBlock>
+        <TextBox Name="TxtBx_FName"></TextBox>
+        <TextBlock Text="Second Player Name"></TextBlock>
+        <TextBox Name="TxtBx_SName"></TextBox>
+        <TextBlock Text="CPU Enabled"></TextBlock>
+        <RadioButton Content="CPU" Name="RdioBtn_EnabledCPU"></RadioButton>
+        <TextBlock Text="Grid Size"></TextBlock>
+        <ComboBox Name="CmboBx_Size"></ComboBox>
+        <Button Content="Go Back" Name="Btn_GoBack" Click="GoHome"></Button>
+        <Button Content="Play" Name="Btn_Play" Click="Play"></Button>
+    </StackPanel>
+</Window>

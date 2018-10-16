@@ -21,9 +21,14 @@ namespace Pente
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(int GridSize, string player1Name, string player2Name, bool isCpuEnabled)
         {
             InitializeComponent();
+            GameBoard game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
+            Grid.SetColumn(game,1);
+            Grid.SetRow(game,1);
+            game.Height = double.NaN;
+            game.Width = double.NaN;
         }
     }
 }

@@ -20,8 +20,5 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width=".3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-
-        <xaml:GameBoard Grid.Column="1" Grid.Row="1"></xaml:GameBoard>
-        
     </Grid>
 </Window>
