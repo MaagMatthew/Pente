@@ -19,28 +19,41 @@ namespace Pente.XAML
     /// </summary>
     public partial class GameBoard : UserControl
     {
-        public bool IsFirstPalyer { get; set; }
+        public bool IsFirstPlayer { get; set; }
+        public GameBoard(int squareSize)
+        {
+            InitializeComponent();
+            BuildBoard(squareSize);
+            AddCanvasToEachSpace();
+
+        }
+
         public GameBoard()
         {
             InitializeComponent();
-            DefineRows();
-            DefineColumns();
+            BuildBoard(19);
             AddCanvasToEachSpace();
-            IsFirstPalyer = true;
+            IsFirstPlayer = true;
         }
 
         #region Creating Board
-        private void DefineRows()
+
+        private void BuildBoard(int squareSize)
         {
-            for (int i = 0; i < 19; i++)
+            DefineColumns(squareSize);
+            DefineRows(squareSize);
+        }
+        private void DefineRows(int rows)
+        {
+            for (int i = 0; i < rows; i++)
             {
                 gameBoard.RowDefinitions.Add(new RowDefinition());
             }
         }
 
-        private void DefineColumns()
+        private void DefineColumns(int columns)
         {
-            for (int i = 0; i < 19; i++)
+            for (int i = 0; i < columns; i++)
             {
                 gameBoard.ColumnDefinitions.Add(new ColumnDefinition());
             }
@@ -96,22 +109,22 @@ namespace Pente.XAML
 
                     Ellipse shape = new Ellipse()
                     {
-                        Height = 20,
-                        Width = 20,
+                        Height = this.ActualHeight / 30,
+                        Width = this.ActualWidth / 30,
                     };
 
-                    if (IsFirstPalyer)
+                    if (IsFirstPlayer)
                     {
                         shape.Fill = Brushes.Aqua;
-                        IsFirstPalyer = !IsFirstPalyer;
+                        IsFirstPlayer = !IsFirstPlayer;
                     }
                     else
                     {
                         shape.Fill = Brushes.Yellow;
-                        IsFirstPalyer = !IsFirstPalyer;
+                        IsFirstPlayer = !IsFirstPlayer;
                     }
-                    double left = shape.Width / 2;
-                    double top = shape.Height / 2;
+                    double left = shape.Width / 10;
+                    double top =  shape.Height / 10;
                     shape.Margin = new Thickness(left, top, 0, 0);
                     selectedCanvas.Children.Add(shape);
                 }

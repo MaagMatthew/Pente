@@ -3,10 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:board="clr-namespace:Pente.XAML"
         xmlns:local="clr-namespace:Pente"
         xmlns:xaml="clr-namespace:Pente.XAML"
         mc:Ignorable="d"
+        ResizeMode="NoResize"
         Title="MainWindow" Height="auto" Width="auto" WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
     <Grid x:Name="boardView">
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".2*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height=".2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".3*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width=".3*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <xaml:GameBoard Grid.Column="1" Grid.Row="1"></xaml:GameBoard>
+        
     </Grid>
 </Window>
