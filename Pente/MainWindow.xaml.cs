@@ -21,14 +21,54 @@ namespace Pente
     /// </summary>
     public partial class MainWindow : Window
     {
+        GameBoard game;
         public MainWindow(int GridSize, string player1Name, string player2Name, bool isCpuEnabled)
         {
             InitializeComponent();
-            GameBoard game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
+            game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
+            game.PropertyChanged += NotifyNameChange;
+            PlaceBoard(game);
+            SetNames(player1Name, player2Name);
+        }
+
+        public void PlaceBoard(GameBoard game)
+        {
             Grid.SetColumn(game,1);
             Grid.SetRow(game,1);
             game.Height = double.NaN;
             game.Width = double.NaN;
+            boardView.Children.Add(game);            
+        }
+
+        public  void SetNames(string p1,string p2)
+        {
+            TxtBx_FirstPlayer.Text = p1;
+            TxtBx_SecondPlayer.Text = p2;
+        }
+
+        public void StartTimer()
+        {
+
+        }
+        private void NotifyNameChange(object sender, EventArgs e)
+        {
+            MessageBox.Show("Keep");
+        }
+        private void TimerEnded()
+        {
+            TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
+            game.SwitchTurn();
+            TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
+        }
+
+        public void RestartTimer()
+        {
+            
+        }
+
+        public void CreateTimer()
+        {
+            
         }
     }
 }

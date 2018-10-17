@@ -11,19 +11,32 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
 
 namespace Pente.XAML
 {
     /// <summary>
     /// Interaction logic for GameBoard.xaml
     /// </summary>
-    public partial class GameBoard : UserControl
+    public partial class GameBoard : UserControl, INotifyPropertyChanged
     {
-        private bool IsFirstPlayer { get; set; }
+        private bool IsFirstPlayer;
         private string Player1Name, Player2Name;
         private bool IsCPUPlaying;
 
-        public GameBoard(int squareSize, string Player1, string Player2,bool isCPUPlaying)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChange(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
+
+        public string CurrentPlayerName {
+            get { return CurrentPlayerName; }
+            set { CurrentPlayerName = value; NotifyPropertyChange("Player"); }
+        }
+
+        public GameBoard(int squareSize, string Player1, string Player2, bool isCPUPlaying)
         {
             InitializeComponent();
             BuildBoard(squareSize);
@@ -63,44 +76,54 @@ namespace Pente.XAML
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    Border b = new Border();
-                    Grid.SetColumn(b, i);
-                    Grid.SetRow(b, j);
-                    Grid.SetColumnSpan(b, 1);
-                    Grid.SetRowSpan(b, 1);
-                    b.BorderBrush = Brushes.Brown;
-                    b.BorderThickness = new Thickness(1);
+                    Border border = CreateCanvasBorder(i, j);
+                    Canvas canvas = CreateCanvas(i,j, border);
 
-                    Canvas c = new Canvas();
-                    Grid.SetColumn(c, i);
-                    Grid.SetRow(c, j);
-                    Grid.SetColumnSpan(c, 1);
-                    Grid.SetRowSpan(c, 1);
-                    c.Name = "col" + i + "row" + j;
-
-                    c.Background = Brushes.DarkOrange;
-
-                    //Each Canvas has a Name like "col" "10" "row" "15" (Example Below, Uncomment to see Example on Run) 
-                    //if (canvas.Name == "col10row15")
-                    //{
-                    //    canvas.Background = Brushes.DarkRed;
-                    //}
-
-                    gameBoard.Children.Add(c);
+                    gameBoard.Children.Add(border);
                 }
             }
         }
 
+        //Create Canvas
+        private Canvas CreateCanvas(int row,int column,Border border)
+        {
+
+            Canvas canvas = new Canvas();
+
+            Grid.SetColumn(canvas, column);
+            Grid.SetRow(canvas, row);
+
+
+            canvas.Background = Brushes.Orange;
+
+            border.Child = canvas;
+
+            canvas.Name = $"R{row}C{column}";
+
+            return canvas;
+        }
+
+        //Create Border
+        private Border CreateCanvasBorder(int row, int column)
+        {
+            Border border = new Border();
+            Grid.SetColumn(border,column);
+            Grid.SetRow(border,row);
+            border.BorderBrush = Brushes.LimeGreen;
+            border.BorderThickness = new Thickness(1);
+            return border;
+        }
+
+        //Did player Click on a canvas
+        //if so create a stone
+        //color the stone
+        //set margins so its close to the center of canvas
+        //place the stone on canvas
+        //and switch turns
         private void LeftButtonPlace(object sender, MouseButtonEventArgs e)
         {
             var selectedCanvas = e.Source as Canvas;
 
-            //Did player Click on a canvas
-            //if so create a stone
-            //color the stone
-            //set margins so its close to the center of canvas
-            //place the stone on canvas
-            //and switch turns
 
             if (selectedCanvas != null)
             {
@@ -118,10 +141,13 @@ namespace Pente.XAML
 
         private Ellipse CreateShape()
         {
+            double rowCount = gameBoard.RowDefinitions.Count;
+            double columnCount = gameBoard.ColumnDefinitions.Count;
+
             Ellipse shape = new Ellipse()
             {
-                Height = this.ActualHeight / 30,
-                Width = this.ActualWidth / 30,
+                Height = this.ActualHeight / (rowCount * 1.5),
+                Width = this.ActualWidth / (columnCount * 1.5),
             };
             return shape;
         }
@@ -141,14 +167,22 @@ namespace Pente.XAML
         }
         private void PlaceStone(Shape shape)
         {
-            double left = shape.Width / 10;
-            double top = shape.Height / 10;
+            double left = shape.Width/3;
+            double top = shape.Height/3;
             shape.Margin = new Thickness(left, top, 0, 0);
         }
 
-        private void SwitchTurn()
+        public void SwitchTurn()
         {
             IsFirstPlayer = !IsFirstPlayer;
+            if (CurrentPlayerName == Player1Name)
+            {
+                CurrentPlayerName = Player2Name;
+            }
+            else
+            {
+                CurrentPlayerName = Player1Name;
+            }
         }
 
         private void RightButtonRemove(object sender, MouseButtonEventArgs e)

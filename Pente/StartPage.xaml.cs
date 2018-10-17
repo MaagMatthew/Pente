@@ -29,7 +29,7 @@ namespace Pente
             Settings settings = new Settings();
             this.Visibility = Visibility.Hidden;
             settings.ShowDialog();
-            this.Visibility = Visibility.Hidden;
+            this.Visibility = Visibility.Visible;
         }
 
         private void GetHelp(object sender, RoutedEventArgs e)

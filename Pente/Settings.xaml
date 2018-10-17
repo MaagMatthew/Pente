@@ -7,16 +7,16 @@
         mc:Ignorable="d"
         Title="Settings" WindowStyle="None" WindowState="Maximized">
     <StackPanel>
-        <TextBlock Text="Settings"></TextBlock>
-        <TextBlock Text="First Player Name"></TextBlock>
-        <TextBox Name="TxtBx_FName"></TextBox>
-        <TextBlock Text="Second Player Name"></TextBlock>
-        <TextBox Name="TxtBx_SName"></TextBox>
-        <TextBlock Text="CPU Enabled"></TextBlock>
-        <RadioButton Content="CPU" Name="RdioBtn_EnabledCPU"></RadioButton>
-        <TextBlock Text="Grid Size"></TextBlock>
-        <ComboBox Name="CmboBx_Size"></ComboBox>
-        <Button Content="Go Back" Name="Btn_GoBack" Click="GoHome"></Button>
-        <Button Content="Play" Name="Btn_Play" Click="Play"></Button>
+        <TextBlock Text="Settings" FontSize="32" Margin="20,20,5,20"></TextBlock>
+        <TextBlock Text="First Player Name" Margin="20,5,5,0"></TextBlock>
+        <TextBox Name="TxtBx_FName" Margin="50,5,400,0"></TextBox>
+        <TextBlock Text="Second Player Name" Margin="20,5,5,0"></TextBlock>
+        <TextBox Name="TxtBx_SName" Margin="50,5,400,0"></TextBox>
+        <TextBlock Text="CPU Enabled" Margin="20,5,5,0"></TextBlock>
+        <RadioButton Content="CPU" Name="RdioBtn_EnabledCPU" Margin="50,5,5,0"></RadioButton>
+        <TextBlock Text="Grid Size" Margin="20,5,5,0"></TextBlock>
+        <ComboBox Name="CmboBx_Size" Margin="50,5,400,0"></ComboBox>
+        <Button Content="Play" Name="Btn_Play" Click="Play" Width="400" Margin="0,40,0,20"></Button>
+        <Button Content="Go Back" Name="Btn_GoBack" Click="GoHome" Width="300"></Button>
     </StackPanel>
 </Window>

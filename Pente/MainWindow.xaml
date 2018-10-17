@@ -20,5 +20,15 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width=".3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Name Here" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="2" Grid.Row="0" Name="TxtBx_SecondPlayer"></TextBlock>
+        <TextBlock Text="Name Here" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="0" Grid.Row="0" Name="TxtBx_FirstPlayer"></TextBlock>
+        <TextBlock Text="Timer Seconds Left" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0"></TextBlock>
+
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Help" Grid.Column="0" Grid.Row="2" Height="40" Width="75"></Button>
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Main" Grid.Column="2" Grid.Row="2" Height="40" Width="75"></Button>
+
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Text="This is player X Turns and other Notifcations" Name="TxtBx_Notifications"></TextBlock>
+        
     </Grid>
 </Window>

@@ -9,12 +9,14 @@
         Height="auto"
         Title="Help" ResizeMode="NoResize" WindowStyle="None" WindowState="Maximized">
     <StackPanel>
-        <TextBlock Text="Objective"></TextBlock>
-        <TextBlock Text="Win Con"></TextBlock>
-        <TextBlock Text="Rules"></TextBlock>
-        <TextBlock Text="rules of game "></TextBlock>
-        <TextBlock Text="How To Play"></TextBlock>
-        <TextBlock Text="what the controles are"></TextBlock>
-        <Button Content="Main Menu" Click="Button_Click"></Button>
+        <TextBlock Text="Playing Pente" FontSize="32" Margin="0,5,0,20" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+        <TextBlock Text="Objective" FontSize="24" Margin="20,5,0,10"></TextBlock>
+        <TextBlock Text="Have 5 stones connectting in a row(Vertical, Horizontal, or Diagnol)" Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="Rules" FontSize="24" Margin="20,5,0,10"></TextBlock>
+        <TextBlock Text="Each Player Takes a turn placing one stone." Margin="50,5,0,10"></TextBlock>
+        <TextBlock Text="Once A player Places down a stone they cannot remove it and the turn is Passed." Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="How To Play" FontSize="24" Margin="20,5,0,20"></TextBlock>
+        <TextBlock Text="Left Click to Place Donw A stone." Margin="50,5,0,20"></TextBlock>
+        <Button Content="Return" Click="Button_Click" HorizontalAlignment="Center" Width="100" Margin="0,20,0,0"></Button>
     </StackPanel>
 </Window>
