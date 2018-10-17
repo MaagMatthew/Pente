@@ -13,7 +13,7 @@
         <TextBlock Text="Second Player Name" Margin="20,5,5,0"></TextBlock>
         <TextBox Name="TxtBx_SName" Margin="50,5,400,0"></TextBox>
         <TextBlock Text="CPU Enabled" Margin="20,5,5,0"></TextBlock>
-        <RadioButton Content="CPU" Name="RdioBtn_EnabledCPU" Margin="50,5,5,0"></RadioButton>
+        <CheckBox Content="CPU" Name="RdioBtn_EnabledCPU" Margin="50,5,5,0"></CheckBox>
         <TextBlock Text="Grid Size" Margin="20,5,5,0"></TextBlock>
         <ComboBox Name="CmboBx_Size" Margin="50,5,400,0"></ComboBox>
         <Button Content="Play" Name="Btn_Play" Click="Play" Width="400" Margin="0,40,0,20"></Button>
