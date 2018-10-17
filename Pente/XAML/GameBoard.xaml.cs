@@ -31,10 +31,19 @@ namespace Pente.XAML
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
 
-        public string CurrentPlayerName {
-            get { return CurrentPlayerName; }
-            set { CurrentPlayerName = value; NotifyPropertyChange("Player"); }
+        public string _CurrentPlayer {get; private set; }
+        public string CurrentPlayerName
+        {
+            get { return this._CurrentPlayer;}
+            set
+            {
+                _CurrentPlayer = value;
+                NotifyPropertyChange("Current");
+                return;
+            }
+
         }
+
 
         public GameBoard(int squareSize, string Player1, string Player2, bool isCPUPlaying)
         {
@@ -43,6 +52,7 @@ namespace Pente.XAML
             AddCanvasToEachSpace();
             Player1Name = Player1;
             Player2Name = Player2;
+            CurrentPlayerName = Player1;
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
         }
@@ -77,7 +87,7 @@ namespace Pente.XAML
                 for (int j = 0; j < rows; j++)
                 {
                     Border border = CreateCanvasBorder(i, j);
-                    Canvas canvas = CreateCanvas(i,j, border);
+                    Canvas canvas = CreateCanvas(i, j, border);
 
                     gameBoard.Children.Add(border);
                 }
@@ -85,7 +95,7 @@ namespace Pente.XAML
         }
 
         //Create Canvas
-        private Canvas CreateCanvas(int row,int column,Border border)
+        private Canvas CreateCanvas(int row, int column, Border border)
         {
 
             Canvas canvas = new Canvas();
@@ -107,8 +117,8 @@ namespace Pente.XAML
         private Border CreateCanvasBorder(int row, int column)
         {
             Border border = new Border();
-            Grid.SetColumn(border,column);
-            Grid.SetRow(border,row);
+            Grid.SetColumn(border, column);
+            Grid.SetRow(border, row);
             border.BorderBrush = Brushes.LimeGreen;
             border.BorderThickness = new Thickness(1);
             return border;
@@ -167,14 +177,15 @@ namespace Pente.XAML
         }
         private void PlaceStone(Shape shape)
         {
-            double left = shape.Width/3;
-            double top = shape.Height/3;
+            double left = shape.Width / 3;
+            double top = shape.Height / 3;
             shape.Margin = new Thickness(left, top, 0, 0);
         }
 
         public void SwitchTurn()
         {
             IsFirstPlayer = !IsFirstPlayer;
+
             if (CurrentPlayerName == Player1Name)
             {
                 CurrentPlayerName = Player2Name;

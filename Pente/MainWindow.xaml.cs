@@ -29,6 +29,8 @@ namespace Pente
             game.PropertyChanged += NotifyNameChange;
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
+
+            TxtBx_Notifications.Text = "Welcome Player 1 Take Turn";
         }
 
         public void PlaceBoard(GameBoard game)
@@ -52,7 +54,14 @@ namespace Pente
         }
         private void NotifyNameChange(object sender, EventArgs e)
         {
-            MessageBox.Show("Keep");
+            if (game.CurrentPlayerName == TxtBx_FirstPlayer.Text)
+            {
+                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
+            }
+            else
+            {
+                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
+            }
         }
         private void TimerEnded()
         {
@@ -69,6 +78,18 @@ namespace Pente
         public void CreateTimer()
         {
             
+        }
+        private void Return(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void GetHelp(object sender, RoutedEventArgs e)
+        {
+            Help helpPage = new Help();
+            this.Visibility = Visibility.Hidden;
+            helpPage.ShowDialog();
+            this.Visibility = Visibility.Visible;
         }
     }
 }

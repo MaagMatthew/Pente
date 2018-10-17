@@ -19,7 +19,7 @@
             <RowDefinition Height=".4*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TextBox Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pente" FontSize="64"></TextBox>
+        <TextBlock Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Pente" FontSize="64"></TextBlock>
         <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Play" Grid.Column="1" Grid.Row="1" Name="Btn_Play" Click="PlayGame" Width="200" Height="50"></Button>
         <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Help" Grid.Column="0" Grid.Row="2" Name="Btn_Help" Click="GetHelp" Width="150" Height="40"></Button>
         <Button HorizontalAlignment="Center" VerticalAlignment="Center" Content="Quit" Grid.Column="2" Grid.Row="2" Name="Btn_Quit" Click="Quit" Width="150" Height="40"></Button>
