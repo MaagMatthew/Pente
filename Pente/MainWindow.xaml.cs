@@ -112,9 +112,12 @@ namespace Pente
 
         public void RestartTimer()
         {
-            time.Stop();
-            timerValue = countdownFrom;
-            StartTimer();
+            if (game._HasWinner == false)
+            {
+                time.Stop();
+                timerValue = countdownFrom;
+                StartTimer();
+            }
         }
 
         public void CreateTimer()
