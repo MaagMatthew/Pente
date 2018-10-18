@@ -274,15 +274,18 @@ namespace Pente.XAML
         //Switch names and boolean
         public void SwitchTurn()
         {
-            IsFirstPlayer = !IsFirstPlayer;
+            if (_HasWinner == false)
+            {
+                IsFirstPlayer = !IsFirstPlayer;
 
-            if (CurrentPlayerName == Player1Name)
-            {
-                CurrentPlayerName = Player2Name;
-            }
-            else
-            {
-                CurrentPlayerName = Player1Name;
+                if (CurrentPlayerName == Player1Name)
+                {
+                    CurrentPlayerName = Player2Name;
+                }
+                else
+                {
+                    CurrentPlayerName = Player1Name;
+                }
             }
         }
 
