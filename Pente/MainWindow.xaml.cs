@@ -1,9 +1,11 @@
 ﻿using Pente.XAML;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,11 +24,28 @@ namespace Pente
     public partial class MainWindow : Window
     {
         GameBoard game;
+        Timer time = new Timer();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public static int maxTimerValue = 20;
+        public int timerValue = 0;
+
+        public int TimerValue
+        {
+            get { return timerValue; }
+            set
+            {
+                timerValue = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimerValue"));
+            }
+        }
+
         public MainWindow(int GridSize, string player1Name, string player2Name, bool isCpuEnabled)
         {
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
             game.PropertyChanged += NotifyNameChange;
+            time.Elapsed += UpdateTimer;
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
 
@@ -50,8 +69,15 @@ namespace Pente
 
         public void StartTimer()
         {
-
+            CreateTimer();
+            time.Start();
         }
+
+        private void UpdateTimer(object sender = null, ElapsedEventArgs e = null)
+        {
+            TimerValue++;
+        }
+
         private void NotifyNameChange(object sender, EventArgs e)
         {
             if (game.CurrentPlayerName == TxtBx_FirstPlayer.Text)
@@ -63,6 +89,7 @@ namespace Pente
                 TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             }
         }
+
         private void TimerEnded()
         {
             TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
@@ -72,13 +99,15 @@ namespace Pente
 
         public void RestartTimer()
         {
-            
+            time.Stop();
+            timerValue = 0;
         }
 
         public void CreateTimer()
         {
-            
+            time = new Timer();
         }
+
         private void Return(object sender, RoutedEventArgs e)
         {
             Close();
