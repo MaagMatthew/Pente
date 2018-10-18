@@ -276,7 +276,7 @@ namespace Pente.XAML
         {
             IsFirstPlayer = !IsFirstPlayer;
 
-            if (_CurrentPlayerName == Player1Name)
+            if (CurrentPlayerName == Player1Name)
             {
                 CurrentPlayerName = Player2Name;
             }
