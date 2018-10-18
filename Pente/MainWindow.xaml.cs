@@ -24,7 +24,7 @@ namespace Pente
     public partial class MainWindow : Window
     {
         GameBoard game;
-        Timer time = new Timer();
+        Timer time;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static int maxTimerValue = 20;
@@ -45,6 +45,7 @@ namespace Pente
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
             game.PropertyChanged += NotifyNameChange;
+            CreateTimer();
             time.Elapsed += UpdateTimer;
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
@@ -69,13 +70,23 @@ namespace Pente
 
         public void StartTimer()
         {
-            CreateTimer();
             time.Start();
         }
 
         private void UpdateTimer(object sender = null, ElapsedEventArgs e = null)
         {
-            TimerValue++;
+            if (timerValue < maxTimerValue)
+            {
+                timerValue++;
+            }
+            else
+            {
+                RestartTimer();
+                game.SwitchTurn();
+                StartTimer();
+            }
+
+            timerText.Text = timerValue + "";
         }
 
         private void NotifyNameChange(object sender, EventArgs e)
