@@ -276,7 +276,7 @@ namespace Pente.XAML
         {
             IsFirstPlayer = !IsFirstPlayer;
 
-            if (CurrentPlayerName == Player1Name)
+            if (_CurrentPlayerName == Player1Name)
             {
                 CurrentPlayerName = Player2Name;
             }
@@ -426,7 +426,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -485,7 +485,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -544,7 +544,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -603,7 +603,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -662,7 +662,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -720,7 +720,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
@@ -778,7 +778,7 @@ namespace Pente.XAML
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 5)
+                        if (friendlyCounter == 4)
                         {
                             HasWinner = true;
                         }
