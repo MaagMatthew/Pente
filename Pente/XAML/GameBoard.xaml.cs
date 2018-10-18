@@ -167,11 +167,40 @@ namespace Pente.XAML
                         PlaceStone(shape);
                         selectedCanvas.Children.Add(shape);
                         CheckWin(selectedCanvas);
+                        if (IsCPUPlaying)
+                        {
+                            SwitchTurn();
+                            TakeCPUTurn();
+                            MessageBox.Show("CPU Has Taken Turn");
+                        }
                         SwitchTurn();
                     }
                 }
             }
         }
+        public void TakeCPUTurn()
+        {
+            Random r = new Random();
+            bool IsValidSpot = false;
+            int selectedColumn;
+            int selectedRow;
+            do
+            {
+                selectedColumn = r.Next(0, gameBoard.ColumnDefinitions.Count);
+                selectedRow = r.Next(0, gameBoard.RowDefinitions.Count);
+                Canvas canvas = GetCanvas(selectedColumn, selectedRow);
+                if (canvas.Children.Count < 1)
+                {
+                    Ellipse shape = CreateShape();
+                    ColorStone(shape);
+                    PlaceStone(shape);
+                    canvas.Children.Add(shape);
+                    CheckWin(canvas);
+                    IsValidSpot = true;
+                }
+            } while (!IsValidSpot);
+        }
+
         //Craetes Ellipse
         private Ellipse CreateShape()
         {
@@ -241,7 +270,6 @@ namespace Pente.XAML
             CheckRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckUp(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckDown(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-
         }
 
         //Switch names and boolean
