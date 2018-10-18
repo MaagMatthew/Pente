@@ -89,7 +89,7 @@ namespace Pente
             string result = TxtBx_SName.Text;
             if (string.IsNullOrWhiteSpace(result) & GetCPUStatus())
             {
-                return "CPU";
+                return $"{result}(CPU)";
             }
             else if (string.IsNullOrWhiteSpace(result) & !GetCPUStatus())
             {

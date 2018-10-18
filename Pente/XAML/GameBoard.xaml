@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Pente.XAML"
         mc:Ignorable="d"
         Height="auto" Width="auto">
-    <Grid x:Name="gameBoard" MouseLeftButtonDown="LeftButtonPlace"  MouseRightButtonDown="RightButtonRemove">
+    <Grid x:Name="gameBoard" MouseLeftButtonDown="LeftButtonPlace">
 
     </Grid>
 </UserControl>

@@ -27,6 +27,7 @@ namespace Pente
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
             game.PropertyChanged += NotifyNameChange;
+            game.PropertyChanged += NotifyGameEnded;
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
 
@@ -61,6 +62,15 @@ namespace Pente
             else
             {
                 TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
+            }
+        }
+
+        private void NotifyGameEnded(object sender, EventArgs e)
+        {
+            if (game.HasWinner)
+            {
+                game.SwitchTurn();
+                TxtBx_Notifications.Text = $"Game has Ended! Winnner{game.CurrentPlayerName}";
             }
         }
         private void TimerEnded()

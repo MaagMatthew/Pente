@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:board="clr-namespace:Pente.XAML"
         xmlns:local="clr-namespace:Pente"
-        xmlns:xaml="clr-namespace:Pente.XAML"
         mc:Ignorable="d"
         ResizeMode="NoResize"
         Title="MainWindow" Height="auto" Width="auto" WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
