@@ -21,7 +21,6 @@ namespace Pente.XAML
     public partial class GameBoard : UserControl, INotifyPropertyChanged
     {
         #region Properties
-        private bool IsFirstTurn;
         public bool _HasWinner { get; private set; }
         public bool HasWinner
         {

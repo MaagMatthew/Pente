@@ -26,7 +26,7 @@ namespace Pente
         GameBoard game;
         DispatcherTimer time;
 
-        public static int countdownFrom =20;
+        public static int countdownFrom = 20;
 
         public int timerValue = countdownFrom;
 
@@ -34,6 +34,7 @@ namespace Pente
         {
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
+            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             game.PropertyChanged += NotifyNameChange;
             game.PropertyChanged += NotifyGameEnded;
             CreateTimer();
@@ -41,7 +42,7 @@ namespace Pente
             SetNames(player1Name, player2Name);
             StartTimer();
 
-            TxtBx_Notifications.Text = "Welcome Player 1 Take Turn";
+            TxtBx_Timer.Text = countdownFrom.ToString();
         }
 
         public void PlaceBoard(GameBoard game)
@@ -74,8 +75,6 @@ namespace Pente
             if (timerValue == 0)
             {
                 RestartTimer();
-                game.SwitchTurn();
-                StartTimer();
             }
 
             TxtBx_Timer.Text = timerValue + "";
@@ -91,6 +90,8 @@ namespace Pente
             {
                 TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             }
+
+            RestartTimer();
         }
 
         private void NotifyGameEnded(object sender, EventArgs e)
@@ -113,6 +114,7 @@ namespace Pente
         {
             time.Stop();
             timerValue = countdownFrom;
+            StartTimer();
         }
 
         public void CreateTimer()
