@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -24,34 +24,25 @@ namespace Pente
     public partial class MainWindow : Window
     {
         GameBoard game;
-        Timer time;
-        public event PropertyChangedEventHandler PropertyChanged;
+        DispatcherTimer time;
 
-        public static int maxTimerValue = 20;
-        public int timerValue = 0;
+        public static int countdownFrom = 20;
 
-        public int TimerValue
-        {
-            get { return timerValue; }
-            set
-            {
-                timerValue = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TimerValue"));
-            }
-        }
+        public int timerValue = countdownFrom;
 
         public MainWindow(int GridSize, string player1Name, string player2Name, bool isCpuEnabled)
         {
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
+            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             game.PropertyChanged += NotifyNameChange;
             game.PropertyChanged += NotifyGameEnded;
             CreateTimer();
-            time.Elapsed += UpdateTimer;
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
+            StartTimer();
 
-            TxtBx_Notifications.Text = "Welcome Player 1 Take Turn";
+            TxtBx_Timer.Text = countdownFrom.ToString();
         }
 
         public void PlaceBoard(GameBoard game)
@@ -74,17 +65,16 @@ namespace Pente
             time.Start();
         }
 
-        private void UpdateTimer(object sender = null, ElapsedEventArgs e = null)
+        private void UpdateTimer(object sender = null, EventArgs e = null)
         {
-            if (timerValue < maxTimerValue)
+            if (timerValue > 0)
             {
-                timerValue++;
+                timerValue--;
             }
-            else
+            
+            if (timerValue == 0)
             {
                 RestartTimer();
-                game.SwitchTurn();
-                StartTimer();
             }
 
             TxtBx_Timer.Text = timerValue + "";
@@ -100,6 +90,8 @@ namespace Pente
             {
                 TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             }
+
+            RestartTimer();
         }
 
         private void NotifyGameEnded(object sender, EventArgs e)
@@ -121,12 +113,15 @@ namespace Pente
         public void RestartTimer()
         {
             time.Stop();
-            timerValue = 0;
+            timerValue = countdownFrom;
+            StartTimer();
         }
 
         public void CreateTimer()
         {
-            time = new Timer();
+            time = new DispatcherTimer();
+            time.Tick += new EventHandler(UpdateTimer);
+            time.Interval = new TimeSpan(0, 0, 0, 1);
         }
 
         private void Return(object sender, RoutedEventArgs e)
