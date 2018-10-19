@@ -79,6 +79,12 @@ namespace Pente.XAML
         {
             int middle = gameBoard.ColumnDefinitions.Count / 2;
             Canvas canvas = GetCanvas(middle, middle);
+            Ellipse shape = CreateShape();
+            ColorStone(shape);
+            PlaceStone(shape);
+            canvas.Children.Add(shape);
+            SwitchTurn();
+
         }
 
         //Create Grid Based on User Input
