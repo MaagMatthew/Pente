@@ -21,6 +21,9 @@ namespace Pente.XAML
     public partial class GameBoard : UserControl, INotifyPropertyChanged
     {
         #region Properties
+        private bool IsFirstMove;
+        int p1CaptureCount;
+        int p2CaptureCount;
         public bool _HasWinner { get; private set; }
         public bool HasWinner
         {
@@ -67,6 +70,7 @@ namespace Pente.XAML
             CurrentPlayerName = Player1;
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
+            IsFirstMove = true;
         }
 
         //Create Grid Based on User Input
@@ -269,6 +273,7 @@ namespace Pente.XAML
             CheckRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckUp(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckDown(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckConditions();
         }
 
         //Switch names and boolean
@@ -298,6 +303,7 @@ namespace Pente.XAML
                     Canvas canvas = GetCanvas(positions[i + 1], positions[i]);
                     canvas.Children.Clear();
                 }
+                AddCapturePoints();
             }
         }
 
@@ -383,6 +389,31 @@ namespace Pente.XAML
             else
             {
                 return false;
+            }
+        }
+
+        //Adds to a players Count;
+        private void AddCapturePoints()
+        {
+            if (IsFirstPlayer)
+            {
+                p1CaptureCount++;
+            }
+            else
+            {
+                p2CaptureCount++;
+            }
+        }
+
+        //Check if a player either player has a count of 5 or 
+        private void CheckConditions()
+        {
+            if (!_HasWinner)
+            {
+                if (p1CaptureCount >= 5|| p2CaptureCount >= 5)
+                {
+                    _HasWinner = true;
+                }
             }
         }
 

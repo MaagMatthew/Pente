@@ -34,12 +34,12 @@ namespace Pente
         {
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
-            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             game.PropertyChanged += NotifyNameChange;
             game.PropertyChanged += NotifyGameEnded;
             CreateTimer();
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
+            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             StartTimer();
 
             TxtBx_Timer.Text = countdownFrom.ToString();
@@ -84,11 +84,11 @@ namespace Pente
         {
             if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
             {
-                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             }
             else
             {
-                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
             }
 
             RestartTimer();
@@ -98,16 +98,22 @@ namespace Pente
         {
             if (game._HasWinner)
             {
-                game.SwitchTurn();
-                TxtBx_Notifications.Text = $"Game has Ended! Winnner{game.CurrentPlayerName}";
+                if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
+                {
+                    TxtBx_Notifications.Text = $"{game._CurrentPlayerName} has won and {TxtBx_SecondPlayer.Text} is a loser";
+                }
+                else
+                {
+                    TxtBx_Notifications.Text = $"{game._CurrentPlayerName} has won and {TxtBx_FirstPlayer.Text} is a loser";
+                }
             }
         }
 
         private void TimerEnded()
         {
-            //TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
-            //game.SwitchTurn();
-            //TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
+            TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
+            game.SwitchTurn();
+            TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
         }
 
         public void RestartTimer()
