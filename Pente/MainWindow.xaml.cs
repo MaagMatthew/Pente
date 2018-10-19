@@ -34,12 +34,12 @@ namespace Pente
         {
             InitializeComponent();
             game = new GameBoard(GridSize, player1Name, player2Name,isCpuEnabled);
-            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             game.PropertyChanged += NotifyNameChange;
             game.PropertyChanged += NotifyGameEnded;
             CreateTimer();
             PlaceBoard(game);
             SetNames(player1Name, player2Name);
+            TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             StartTimer();
 
             TxtBx_Timer.Text = countdownFrom.ToString();
@@ -77,18 +77,18 @@ namespace Pente
                 RestartTimer();
             }
 
-            TxtBx_Timer.Text = timerValue + "";
+            TxtBx_Timer.Text = timerValue.ToString();
         }
 
         private void NotifyNameChange(object sender, EventArgs e)
         {
-            if (game.CurrentPlayerName == TxtBx_FirstPlayer.Text)
+            if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
             {
-                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
             }
             else
             {
-                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
             }
 
             RestartTimer();
@@ -96,10 +96,16 @@ namespace Pente
 
         private void NotifyGameEnded(object sender, EventArgs e)
         {
-            if (game.HasWinner)
+            if (game._HasWinner)
             {
-                game.SwitchTurn();
-                TxtBx_Notifications.Text = $"Game has Ended! Winnner{game.CurrentPlayerName}";
+                if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
+                {
+                    TxtBx_Notifications.Text = $"{game._CurrentPlayerName} has won and {TxtBx_SecondPlayer.Text} is a loser";
+                }
+                else
+                {
+                    TxtBx_Notifications.Text = $"{game._CurrentPlayerName} has won and {TxtBx_FirstPlayer.Text} is a loser";
+                }
             }
         }
 
@@ -135,9 +141,7 @@ namespace Pente
         private void GetHelp(object sender, RoutedEventArgs e)
         {
             Help helpPage = new Help();
-            this.Visibility = Visibility.Hidden;
             helpPage.ShowDialog();
-            this.Visibility = Visibility.Visible;
         }
     }
 }

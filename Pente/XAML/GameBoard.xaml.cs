@@ -21,6 +21,9 @@ namespace Pente.XAML
     public partial class GameBoard : UserControl, INotifyPropertyChanged
     {
         #region Properties
+        private bool IsFirstMove;
+        int p1CaptureCount;
+        int p2CaptureCount;
         public bool _HasWinner { get; private set; }
         public bool HasWinner
         {
@@ -37,15 +40,15 @@ namespace Pente.XAML
         private string Player1Name, Player2Name;
         public string CurrentPlayerName
         {
-            get { return this._CurrentPlayer; }
+            get { return this._CurrentPlayerName; }
             set
             {
-                _CurrentPlayer = value;
+                _CurrentPlayerName = value;
                 NotifyPropertyChange("Current");
                 return;
             }
         }
-        public string _CurrentPlayer { get; private set; }
+        public string _CurrentPlayerName { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyGameEnded(string info)
         {
@@ -67,6 +70,21 @@ namespace Pente.XAML
             CurrentPlayerName = Player1;
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
+            IsFirstMove = true;
+            PlaceMid();
+        }
+
+        //Force Player 1 to place in the middle
+        private void PlaceMid()
+        {
+            int middle = gameBoard.ColumnDefinitions.Count / 2;
+            Canvas canvas = GetCanvas(middle, middle);
+            Ellipse shape = CreateShape();
+            ColorStone(shape);
+            PlaceStone(shape);
+            canvas.Children.Add(shape);
+            SwitchTurn();
+
         }
 
         //Create Grid Based on User Input
@@ -166,13 +184,16 @@ namespace Pente.XAML
                         PlaceStone(shape);
                         selectedCanvas.Children.Add(shape);
                         CheckWin(selectedCanvas);
-                        if (IsCPUPlaying)
+                        if (IsCPUPlaying && !_HasWinner)
                         {
                             SwitchTurn();
                             TakeCPUTurn();
                             MessageBox.Show("CPU Has Taken Turn");
                         }
-                        SwitchTurn();
+                        if (!_HasWinner)
+                        {
+                            SwitchTurn();
+                        }
                     }
                 }
             }
@@ -269,23 +290,21 @@ namespace Pente.XAML
             CheckRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckUp(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckDown(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckConditions();
         }
 
         //Switch names and boolean
         public void SwitchTurn()
         {
-            if (_HasWinner == false)
-            {
-                IsFirstPlayer = !IsFirstPlayer;
+            IsFirstPlayer = !IsFirstPlayer;
 
-                if (CurrentPlayerName == Player1Name)
-                {
-                    CurrentPlayerName = Player2Name;
-                }
-                else
-                {
-                    CurrentPlayerName = Player1Name;
-                }
+            if (_CurrentPlayerName == Player1Name)
+            {
+                CurrentPlayerName = Player2Name;
+            }
+            else
+            {
+                CurrentPlayerName = Player1Name;
             }
         }
 
@@ -301,6 +320,7 @@ namespace Pente.XAML
                     Canvas canvas = GetCanvas(positions[i + 1], positions[i]);
                     canvas.Children.Clear();
                 }
+                AddCapturePoints();
             }
         }
 
@@ -386,6 +406,31 @@ namespace Pente.XAML
             else
             {
                 return false;
+            }
+        }
+
+        //Adds to a players Count;
+        private void AddCapturePoints()
+        {
+            if (IsFirstPlayer)
+            {
+                p1CaptureCount++;
+            }
+            else
+            {
+                p2CaptureCount++;
+            }
+        }
+
+        //Check if a player either player has a count of 5 or 
+        private void CheckConditions()
+        {
+            if (!_HasWinner)
+            {
+                if (p1CaptureCount >= 5 || p2CaptureCount >= 5)
+                {
+                    _HasWinner = true;
+                }
             }
         }
 
