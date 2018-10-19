@@ -77,12 +77,12 @@ namespace Pente
                 RestartTimer();
             }
 
-            TxtBx_Timer.Text = timerValue + "";
+            TxtBx_Timer.Text = timerValue.ToString();
         }
 
         private void NotifyNameChange(object sender, EventArgs e)
         {
-            if (game.CurrentPlayerName == TxtBx_FirstPlayer.Text)
+            if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
             {
                 TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
             }
@@ -96,7 +96,7 @@ namespace Pente
 
         private void NotifyGameEnded(object sender, EventArgs e)
         {
-            if (game.HasWinner)
+            if (game._HasWinner)
             {
                 game.SwitchTurn();
                 TxtBx_Notifications.Text = $"Game has Ended! Winnner{game.CurrentPlayerName}";
@@ -105,9 +105,9 @@ namespace Pente
 
         private void TimerEnded()
         {
-            TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
-            game.SwitchTurn();
-            TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
+            //TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
+            //game.SwitchTurn();
+            //TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
         }
 
         public void RestartTimer()
@@ -135,9 +135,7 @@ namespace Pente
         private void GetHelp(object sender, RoutedEventArgs e)
         {
             Help helpPage = new Help();
-            this.Visibility = Visibility.Hidden;
             helpPage.ShowDialog();
-            this.Visibility = Visibility.Visible;
         }
     }
 }

@@ -37,15 +37,15 @@ namespace Pente.XAML
         private string Player1Name, Player2Name;
         public string CurrentPlayerName
         {
-            get { return this._CurrentPlayer; }
+            get { return this._CurrentPlayerName; }
             set
             {
-                _CurrentPlayer = value;
+                _CurrentPlayerName = value;
                 NotifyPropertyChange("Current");
                 return;
             }
         }
-        public string _CurrentPlayer { get; private set; }
+        public string _CurrentPlayerName { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyGameEnded(string info)
         {
@@ -276,7 +276,7 @@ namespace Pente.XAML
         {
             IsFirstPlayer = !IsFirstPlayer;
 
-            if (CurrentPlayerName == Player1Name)
+            if (_CurrentPlayerName == Player1Name)
             {
                 CurrentPlayerName = Player2Name;
             }
