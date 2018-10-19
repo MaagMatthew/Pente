@@ -71,6 +71,14 @@ namespace Pente.XAML
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
             IsFirstMove = true;
+            PlaceMid();
+        }
+
+        //Force Player 1 to place in the middle
+        private void PlaceMid()
+        {
+            int middle = gameBoard.ColumnDefinitions.Count / 2;
+            Canvas canvas = GetCanvas(middle, middle);
         }
 
         //Create Grid Based on User Input
@@ -170,13 +178,16 @@ namespace Pente.XAML
                         PlaceStone(shape);
                         selectedCanvas.Children.Add(shape);
                         CheckWin(selectedCanvas);
-                        if (IsCPUPlaying)
+                        if (IsCPUPlaying && !_HasWinner)
                         {
                             SwitchTurn();
                             TakeCPUTurn();
                             MessageBox.Show("CPU Has Taken Turn");
                         }
-                        SwitchTurn();
+                        if (!_HasWinner)
+                        {
+                            SwitchTurn();
+                        }
                     }
                 }
             }
@@ -410,7 +421,7 @@ namespace Pente.XAML
         {
             if (!_HasWinner)
             {
-                if (p1CaptureCount >= 5|| p2CaptureCount >= 5)
+                if (p1CaptureCount >= 5 || p2CaptureCount >= 5)
                 {
                     _HasWinner = true;
                 }
