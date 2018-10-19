@@ -17,6 +17,16 @@
         <TextBlock Text="Once A player Places down a stone they cannot remove it and the turn is Passed." Margin="50,5,0,20"></TextBlock>
         <TextBlock Text="How To Play" FontSize="24" Margin="20,5,0,20"></TextBlock>
         <TextBlock Text="Left Click to Place Down A stone." Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="Capturing" FontSize="24" Margin="20,5,0,20"></TextBlock>
+        <TextBlock Text="Captures can be made in diagonal, horizontal, or verticle lines" Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="All pieces doing the capturing and being captured must be in one consecitive straight line" Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="Once stones are captured, they will be removed from the board." Margin="50,5,0,20"></TextBlock>
+        <TextBlock Text="Special Formations" FontSize="24" Margin="20,5,0,20"></TextBlock>
+        
+        <TextBlock Text="Tria:" FontSize="20" Margin="50,5,0,20"></TextBlock>
+        <Image Source="IMG\Tria.PNG" Width="500" Height="300" HorizontalAlignment="Left"></Image>
+        <TextBlock Text="Tessera:" FontSize="20" Margin="50,5,0,20"></TextBlock>
+        <Image Source="IMG\Tessera.PNG" Width="475" Height="300" HorizontalAlignment="Left"></Image>
         <Button Content="Return" Click="Button_Click" HorizontalAlignment="Center" Width="100" Margin="0,20,0,0"></Button>
     </StackPanel>
 </Window>
