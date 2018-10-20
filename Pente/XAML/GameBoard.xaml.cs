@@ -71,20 +71,17 @@ namespace Pente.XAML
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
             IsFirstMove = true;
-            PlaceMid();
         }
 
         //Force Player 1 to place in the middle
         private void PlaceMid()
         {
-            int middle = gameBoard.ColumnDefinitions.Count / 2;
+            int middle = MidPoint();
             Canvas canvas = GetCanvas(middle, middle);
             Ellipse shape = CreateShape();
             ColorStone(shape);
-            PlaceStone(shape);
+            CenterStone(shape);
             canvas.Children.Add(shape);
-            SwitchTurn();
-
         }
 
         //Create Grid Based on User Input
@@ -129,6 +126,11 @@ namespace Pente.XAML
             }
         }
 
+        //Gets Middle Point of the board
+        private int MidPoint()
+        {
+            return gameBoard.ColumnDefinitions.Count / 2;
+        }
         //Create Canvas
         private Canvas CreateCanvas(int row, int column, Border border)
         {
@@ -162,44 +164,132 @@ namespace Pente.XAML
         //User Mouse Event if left mouse button is clicked or screen touched 
         private void LeftButtonPlace(object sender, MouseButtonEventArgs e)
         {
-            //Make sure game is not over
-            //Did player Click on a canvas
-            //if so create a stone
-            //color the stone
-            //set margins so its close to the center of canvas
-            //place the stone on canvas
-            //Check for Win Conditions or Removal
-            //and switch turns
+            //Is the game Over
+            //If not is this the very first turn for player one
+            ////If so the player is forced to place a piece in the middle
+            //Is this the very first turn for the second player
+            ////Player can only place a piece that is three away
             if (!HasWinner)
             {
                 var selectedCanvas = e.Source as Canvas;
-
                 if (selectedCanvas != null)
                 {
-                    if (selectedCanvas.Children.Count < 1)
+                    if (IsFirstMove && IsFirstPlayer)
                     {
-
-                        Ellipse shape = CreateShape();
-                        ColorStone(shape);
-                        PlaceStone(shape);
-                        selectedCanvas.Children.Add(shape);
-                        CheckWin(selectedCanvas);
-                        if (IsCPUPlaying && !_HasWinner)
+                        PlaceMid();
+                        if (IsCPUPlaying)
                         {
-                            SwitchTurn();
                             TakeCPUTurn();
-                            MessageBox.Show("CPU Has Taken Turn");
+                            MessageBox.Show("CPU has taken turn");
                         }
-                        if (!_HasWinner)
+                        else
                         {
                             SwitchTurn();
+                        }
+                    }
+                    else if (IsFirstMove && !IsFirstPlayer)
+                    {
+                        if (IsThreeAway(selectedCanvas) && selectedCanvas.Children.Count < 1)
+                        {
+                            PlaceStone(selectedCanvas);
+                            SwitchTurn();
+                            IsFirstMove = false;
+                        }
+                    }
+                    else if (!IsFirstMove)
+                    {
+                        if (selectedCanvas.Children.Count < 1)
+                        {
+                            PlaceStone(selectedCanvas);
+                            if (IsCPUPlaying && !_HasWinner)
+                            {
+                                TakeCPUTurn();
+                                MessageBox.Show("CPU Has Taken Turn");
+                            }
+                            if (!_HasWinner && !IsCPUPlaying)
+                            {
+                                SwitchTurn();
+                            }
                         }
                     }
                 }
             }
         }
+
+        private void PlaceStone(Canvas selectedCanvas)
+        {
+            Ellipse shape = CreateShape();
+            ColorStone(shape);
+            CenterStone(shape);
+            selectedCanvas.Children.Add(shape);
+            CheckWin(selectedCanvas);
+        }
+
+        //is this canvas away far enough
+        private bool IsThreeAway(Canvas selected)
+        {
+            int midColumn = MidPoint();
+            int midRow = MidPoint();
+            int selectedColumn = Grid.GetColumn(selected);
+            int selectedRow = Grid.GetRow(selected);
+
+            int ColumnOffset = midColumn - selectedColumn;
+            int RowOffset = midRow - selectedRow;
+
+            if (IsThreeAway(ColumnOffset, RowOffset))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //is this the offsets three away 
+        private bool IsThreeAway(int col, int row)
+        {
+            if (col > 3 && row > 3)
+            {
+                return true;
+            }
+            else if (col > 3 && row < 3)
+            {
+                return true;
+            }
+            else if (col > 3 && row == 0)
+            {
+                return true;
+            }
+            else if (col < -3 && row > 3)
+            {
+                return true;
+            }
+            else if (col < -3 && row < 3)
+            {
+                return true;
+            }
+            else if (col < -3 && row == 0)
+            {
+                return true;
+            }
+            else if (col == 0 && row > 3)
+            {
+                return true;
+            }
+            else if (col == 0 && row < 3)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void TakeCPUTurn()
         {
+            SwitchTurn();
             Random r = new Random();
             bool IsValidSpot = false;
             int selectedColumn;
@@ -209,16 +299,25 @@ namespace Pente.XAML
                 selectedColumn = r.Next(0, gameBoard.ColumnDefinitions.Count);
                 selectedRow = r.Next(0, gameBoard.RowDefinitions.Count);
                 Canvas canvas = GetCanvas(selectedColumn, selectedRow);
-                if (canvas.Children.Count < 1)
+                if (IsFirstMove && IsThreeAway(canvas))
                 {
-                    Ellipse shape = CreateShape();
-                    ColorStone(shape);
-                    PlaceStone(shape);
-                    canvas.Children.Add(shape);
-                    CheckWin(canvas);
-                    IsValidSpot = true;
+                    if (canvas.Children.Count < 1)
+                    {
+                        PlaceStone(canvas);
+                        IsValidSpot = true;
+                        IsFirstMove = false;
+                    }
+                }
+                else if (!IsFirstMove)
+                {
+                    if (canvas.Children.Count < 1)
+                    {
+                        PlaceStone(canvas);
+                        IsValidSpot = true;
+                    }
                 }
             } while (!IsValidSpot);
+            SwitchTurn();
         }
 
         //Craetes Ellipse
@@ -251,7 +350,7 @@ namespace Pente.XAML
         }
 
         //Places Stone in the middle of the Canvas
-        private void PlaceStone(Shape shape)
+        private void CenterStone(Shape shape)
         {
             double left = shape.Width / 4.5;
             double top = shape.Height / 4.5;

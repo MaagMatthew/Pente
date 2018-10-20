@@ -5,6 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pente.XAML"
         mc:Ignorable="d"
+             Background="Black"
+             FontFamily="comic sans ms"
+             Foreground="#006c8D"
         Height="auto" Width="auto">
     <Grid x:Name="gameBoard" MouseLeftButtonDown="LeftButtonPlace">
 

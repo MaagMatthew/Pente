@@ -6,7 +6,10 @@
         xmlns:board="clr-namespace:Pente.XAML"
         xmlns:local="clr-namespace:Pente"
         mc:Ignorable="d"
+        FontFamily="comic sans ms"
         ResizeMode="NoResize"
+        Background="Black"
+        Foreground="#CAE807"
         Title="MainWindow" Height="auto" Width="auto" WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
     <Grid x:Name="boardView">
         <Grid.RowDefinitions>
@@ -24,8 +27,8 @@
         <TextBlock Text="Name Here" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="0" Grid.Row="0" Name="TxtBx_FirstPlayer"></TextBlock>
         <TextBlock Text="Timer Seconds Left" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Name="TxtBx_Timer"></TextBlock>
 
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Help" Grid.Column="0" Grid.Row="2" Height="40" Width="75" Click="GetHelp"></Button>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quit Game" Grid.Column="2" Grid.Row="2" Height="40" Width="75" Click="Return"></Button>
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Help" Grid.Column="0" Grid.Row="2" Height="40" Width="75" Click="GetHelp" Background="#920084" Foreground="#ff6515" FontSize="20"></Button>
+        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Content="Quit Game" Grid.Column="2" Grid.Row="2" Height="40" Width="75" Click="Return" Background="#920084" Foreground="#ff6515" FontSize="13"></Button>
 
         <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2" Text="This is player X Turns and other Notifcations" Name="TxtBx_Notifications"></TextBlock>
         
