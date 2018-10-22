@@ -253,23 +253,11 @@ namespace Pente.XAML
             {
                 return true;
             }
-            else if (col > 3 && row < 3)
-            {
-                return true;
-            }
             else if (col > 3 && row == 0)
             {
                 return true;
             }
-            else if (col < -3 && row > 3)
-            {
-                return true;
-            }
-            else if (col < -3 && row < 3)
-            {
-                return true;
-            }
-            else if (col < -3 && row == 0)
+            else if (col > 3 && row < -3)
             {
                 return true;
             }
@@ -277,7 +265,19 @@ namespace Pente.XAML
             {
                 return true;
             }
-            else if (col == 0 && row < 3)
+            else if (col == 0 && row < -3)
+            {
+                return true;
+            }
+            else if (col < -3 && row > 3)
+            {
+                return true;
+            }
+            else if (col < -3 && row == 0)
+            {
+                return true;
+            }
+            else if (col < -3 && row < -3)
             {
                 return true;
             }
