@@ -24,6 +24,8 @@ namespace Pente.XAML
         private bool IsFirstMove;
         int p1CaptureCount;
         int p2CaptureCount;
+        int MAX_BOARD_SIZE;
+        int pieceCount;
         public bool _HasWinner { get; private set; }
         public bool HasWinner
         {
@@ -71,6 +73,8 @@ namespace Pente.XAML
             IsCPUPlaying = isCPUPlaying;
             IsFirstPlayer = true;
             IsFirstMove = true;
+            MAX_BOARD_SIZE = squareSize * squareSize;
+            pieceCount = 0;
         }
 
         //Force Player 1 to place in the middle
@@ -82,6 +86,7 @@ namespace Pente.XAML
             ColorStone(shape);
             CenterStone(shape);
             canvas.Children.Add(shape);
+            pieceCount += 1;
         }
 
         //Create Grid Based on User Input
@@ -172,46 +177,54 @@ namespace Pente.XAML
             if (!HasWinner)
             {
                 var selectedCanvas = e.Source as Canvas;
-                if (selectedCanvas != null)
+                if (pieceCount != MAX_BOARD_SIZE)
                 {
-                    if (IsFirstMove && IsFirstPlayer)
+                    if (selectedCanvas != null)
                     {
-                        PlaceMid();
-                        if (IsCPUPlaying)
+                        if (IsFirstMove && IsFirstPlayer)
                         {
-                            TakeCPUTurn();
-                            MessageBox.Show("CPU has taken turn");
-                        }
-                        else
-                        {
-                            SwitchTurn();
-                        }
-                    }
-                    else if (IsFirstMove && !IsFirstPlayer)
-                    {
-                        if (IsThreeAway(selectedCanvas) && selectedCanvas.Children.Count < 1)
-                        {
-                            PlaceStone(selectedCanvas);
-                            SwitchTurn();
-                            IsFirstMove = false;
-                        }
-                    }
-                    else if (!IsFirstMove)
-                    {
-                        if (selectedCanvas.Children.Count < 1)
-                        {
-                            PlaceStone(selectedCanvas);
-                            if (IsCPUPlaying && !_HasWinner)
+                            PlaceMid();
+                            if (IsCPUPlaying)
                             {
                                 TakeCPUTurn();
-                                MessageBox.Show("CPU Has Taken Turn");
+                                MessageBox.Show("CPU has taken turn");
                             }
-                            if (!_HasWinner && !IsCPUPlaying)
+                            else
                             {
                                 SwitchTurn();
                             }
                         }
+                        else if (IsFirstMove && !IsFirstPlayer)
+                        {
+                            if (IsThreeAway(selectedCanvas) && selectedCanvas.Children.Count < 1)
+                            {
+                                PlaceStone(selectedCanvas);
+                                SwitchTurn();
+                                IsFirstMove = false;
+                            }
+                        }
+                        else if (!IsFirstMove)
+                        {
+                            if (selectedCanvas.Children.Count < 1)
+                            {
+                                PlaceStone(selectedCanvas);
+                                if (IsCPUPlaying && !_HasWinner)
+                                {
+                                    TakeCPUTurn();
+                                    MessageBox.Show("CPU Has Taken Turn");
+                                }
+                                if (!_HasWinner && !IsCPUPlaying)
+                                {
+                                    SwitchTurn();
+                                }
+                            }
+                        }
                     }
+                }
+                else
+                {
+                    HasWinner = true;
+                    MessageBox.Show("Game Ended in a DRAW!");
                 }
             }
         }
@@ -223,6 +236,7 @@ namespace Pente.XAML
             CenterStone(shape);
             selectedCanvas.Children.Add(shape);
             CheckWin(selectedCanvas);
+            pieceCount += 1;
         }
 
         //is this canvas away far enough
@@ -417,6 +431,7 @@ namespace Pente.XAML
                 for (int i = 0; i < 4; i += 2)
                 {
                     Canvas canvas = GetCanvas(positions[i + 1], positions[i]);
+                    pieceCount -= 1;
                     canvas.Children.Clear();
                 }
                 AddCapturePoints();
