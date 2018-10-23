@@ -25,6 +25,8 @@ namespace Pente.XAML
         int p1CaptureCount;
         int p2CaptureCount;
         public bool _HasWinner { get; private set; }
+        public bool HasTria { get; private set; }
+        public bool HasTessera { get; private set; }
         public bool HasWinner
         {
             get { return this._HasWinner; }
@@ -366,7 +368,7 @@ namespace Pente.XAML
             //Setup
 
             //Var to chech how many boxes we are away from the starting point
-            int positionsAway = 0;
+            int checkedPositions = 0;
 
             //What color is Considered Friendly
             SolidColorBrush friendlyColor = GetFriendlyColor();
@@ -381,14 +383,14 @@ namespace Pente.XAML
             int currentRow = Grid.GetRow(currentCanvas);
             int currentColumn = Grid.GetColumn(currentCanvas);
 
-            CheckUpLeft(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckDownLeft(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckUpRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckDownRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckLeft(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckRight(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckUp(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
-            CheckDown(currentRow, currentColumn, positionsAway, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            Diagnol(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckDownLeft(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckUpRight(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckDownRight(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckLeft(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckRight(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckUp(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckDown(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckConditions();
         }
 
@@ -409,6 +411,7 @@ namespace Pente.XAML
 
         #endregion
         #region Helper Methods
+
         //Remove stones from these positions (Row,Column)
         private void CaptureStones(List<int> positions)
         {
@@ -460,27 +463,6 @@ namespace Pente.XAML
             }
         }
 
-        //Makes sure these points arent the same
-        private bool IsStartingPoint(int rowLeft, int columnLeft, int rowRight, int columnRight)
-        {
-            if (rowLeft != rowRight && columnLeft != columnRight)
-            {
-                return false;
-            }
-            else if (rowLeft == rowRight && columnLeft != columnRight)
-            {
-                return false;
-            }
-            else if (rowLeft != rowRight && columnLeft == columnRight)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
         //Gets a canvas from a certain Position
         public Canvas GetCanvas(int column, int row)
         {
@@ -505,6 +487,43 @@ namespace Pente.XAML
             else
             {
                 return false;
+            }
+        }
+
+        //Get a valid starting point within the board
+        private int Startpoint(int placement)
+        {
+            for (int i = -4; i < 5; i++)
+            {
+                if (IsValidPosition(placement - i))
+                {
+                    return placement - i;
+                }
+            }
+            return -1;
+        }
+
+        //Checks if a player is in a position to capture
+        private void CheckCapture(int nextRow, int nextColumn, int enemyCount, int friendlyCount, SolidColorBrush friendlyColor, List<int> enemyPositions, int playerCount)
+        {
+            //Makes sure 
+            if (enemyCount == 2 && friendlyCount == 1)
+            {
+                if (IsValidPosition(nextColumn) && IsValidPosition(nextRow))
+                {
+                    Canvas nextCanvas = GetCanvas(nextColumn, nextRow);
+                    if (nextCanvas != null)
+                    {
+                        if (HasSameColorStone(friendlyColor, nextCanvas))
+                        {
+                            CaptureStones(enemyPositions);
+                            enemyPositions.Clear();
+                            enemyCount = 0;
+                            friendlyCount = 0;
+                            playerCount = 0;
+                        }
+                    }
+                }
             }
         }
 
@@ -535,80 +554,87 @@ namespace Pente.XAML
 
         #endregion
         #region Check Methods
+
         //Go through Up a row and Left a column searching for an stone of the same color, enemy stone, or space
-        public void CheckUpLeft(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void Diagnol(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
-            int columnOffset = startColumn - 1;
-            int rowOffset = startRow - 1;
-            positionsAway = 0;
+            HasTria = false;
+            HasTessera = false;
+            int columnOffset = Startpoint(startRow);
+            int rowOffset = Startpoint(startColumn);
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
+            int playerCount = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 10)
             {
-                positionsAway++;
+                checkedPositions++;
 
-                //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
                 {
-                    //Get the canvas we are looking At
-                    Canvas neighborCanvas = GetCanvas(columnOffset, rowOffset);
 
-                    //If there is no canvas continue to the next neighbor
-                    //If the canvas has the same color stone add to friendly count
-                    ////If there was an two enemies between start point and the fourth *In Palatine Voice* kill'em...kill'em now....do it
-                    ////Change State to winner if there is 5 in a row
-                    //if the canvas has the enemy color stone add to enemy count and add positsions
+                    Canvas neighbor = GetCanvas(columnOffset, rowOffset);
 
-                    if (neighborCanvas == null)
+                    if (neighbor != null)
                     {
-                        break;
-                    }
-                    else if (HasSameColorStone(friendlyColor, neighborCanvas))
-                    {
-                        friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (HasSameColorStone(friendlyColor, neighbor))
                         {
-                            CaptureStones(enemyPositions);
+                            playerCount++;
+                            friendlyCounter++;
+                            CheckCapture(rowOffset - 1, columnOffset - 1, enemyCounter, friendlyCounter, friendlyColor, enemyPositions, playerCount);
+                            //CheckForCapture;
+                            //CheckForTria();
+                            //CheckForTessera()
                         }
-                        if (friendlyCounter == 4)
+                        else if (neighbor.Children.Count == 0)
                         {
-                            HasWinner = true;
+                            playerCount = 0;
+                            enemyPositions.Clear();
+                            enemyCounter = 0;
+                            friendlyCounter = 0;
+                            playerCount = 0;
+                        }
+                        else if (neighbor.Children.Count != 0)
+                        {
+                            enemyPositions.Add(rowOffset);
+                            enemyPositions.Add(columnOffset);
+                            enemyCounter++;
+                            playerCount++;
                         }
                     }
-                    else if (neighborCanvas.Children.Count != 0)
-                    {
-                        enemyCounter++;
-                        enemyPositions.Add(rowOffset);
-                        enemyPositions.Add(columnOffset);
-                    }
-                    columnOffset--;
-                    rowOffset--;
                 }
                 else
                 {
-                    positionsAway = 6;
+                    playerCount = 0;
+                    enemyPositions.Clear();
+                    enemyCounter = 0;
+                    friendlyCounter = 0;
+                    playerCount = 0;
                 }
-
+                columnOffset--;
+                rowOffset--;
             }
         }
 
-        //Go through Up a row and Right a column searching for an stone of the same color, enemy stone, or space
-        public void CheckUpRight(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
-        {
 
+        //Go through Up a row and Right a column searching for an stone of the same color, enemy stone, or space
+        public void CheckUpRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        {
+            HasTria = false;
+            HasTessera = false;
             int columnOffset = startColumn + 1;
             int rowOffset = startRow - 1;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -628,13 +654,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -648,26 +690,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through down a row and left a column searching for an stone of the same color, enemy stone, or space
-        public void CheckDownLeft(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckDownLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn - 1;
             int rowOffset = startRow + 1;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -687,13 +729,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -707,26 +765,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through Updown a row and right a column searching for an stone of the same color, enemy stone, or space
-        public void CheckDownRight(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckDownRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn + 1;
             int rowOffset = startRow + 1;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -746,13 +804,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -766,26 +840,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through directly left searching for an stone of the same color, enemy stone, or space
-        public void CheckLeft(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn - 1;
             int rowOffset = startRow;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -805,13 +879,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -824,26 +914,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through directly right searching for an stone of the same color, enemy stone, or space
-        public void CheckRight(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn + 1;
             int rowOffset = startRow;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -863,13 +953,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -882,26 +988,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through directly up searching for an stone of the same color, enemy stone, or space
-        public void CheckUp(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckUp(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn;
             int rowOffset = startRow - 1;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -921,13 +1027,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -940,26 +1062,26 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }
         }
 
         //Go through directly down searching for an stone of the same color, enemy stone, or space
-        public void CheckDown(int startRow, int startColumn, int positionsAway, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        public void CheckDown(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn;
             int rowOffset = startRow + 1;
-            positionsAway = 0;
+            checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
 
-            while (positionsAway < 5)
+            while (checkedPositions < 5)
             {
-                positionsAway++;
+                checkedPositions++;
 
                 //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
@@ -979,13 +1101,29 @@ namespace Pente.XAML
                     else if (HasSameColorStone(friendlyColor, neighborCanvas))
                     {
                         friendlyCounter++;
-                        if (positionsAway == 3 && enemyCounter == 2 && friendlyCounter == 1)
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
                             CaptureStones(enemyPositions);
                         }
-                        if (friendlyCounter == 4)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            HasWinner = true;
+                            HasTria = true;
+                        }
+                        if (HasTria && checkedPositions == 3)
+                        {
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
                     else if (neighborCanvas.Children.Count != 0)
@@ -998,7 +1136,7 @@ namespace Pente.XAML
                 }
                 else
                 {
-                    positionsAway = 6;
+                    checkedPositions = 6;
                 }
 
             }

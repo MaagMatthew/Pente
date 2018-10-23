@@ -82,13 +82,22 @@ namespace Pente
 
         private void NotifyNameChange(object sender, EventArgs e)
         {
+            TxtBx_Notifications.Text = "";
+            if (game.HasTessera)
+            {
+                TxtBx_Notifications.Text += "Tessera is present. ";
+            }
+            if (game.HasTria)
+            {
+                TxtBx_Notifications.Text += "Tria is present. ";
+            }
             if (game._CurrentPlayerName == TxtBx_FirstPlayer.Text)
             {
-                TxtBx_Notifications.Text = $"{TxtBx_FirstPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text += $"{TxtBx_FirstPlayer.Text} Take your turn. ";
             }
             else
             {
-                TxtBx_Notifications.Text = $"{TxtBx_SecondPlayer.Text} Take your turn";
+                TxtBx_Notifications.Text += $"{TxtBx_SecondPlayer.Text} Take your turn. ";
             }
 
             RestartTimer();
