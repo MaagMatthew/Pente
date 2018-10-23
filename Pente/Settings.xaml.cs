@@ -19,13 +19,14 @@ namespace Pente
     /// </summary>
     public partial class Settings : Window
     {
+        //load up screen and populate combobox with options
         public Settings()
         {
             InitializeComponent();
             SetGridOptions();
         }
 
-        //sets the options for grid size
+        //sets the options for grid size and default to 19
         private void SetGridOptions()
         {
             for (int i = 9; i <= 39; i+=2)

@@ -24,22 +24,21 @@ namespace Pente
             InitializeComponent();
         }
 
+        //Go to the Settings Page
         private void PlayGame(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();
-            this.Visibility = Visibility.Hidden;
             settings.ShowDialog();
-            this.Visibility = Visibility.Visible;
         }
 
+        //Go to help page
         private void GetHelp(object sender, RoutedEventArgs e)
         {
             Help helpPage = new Help();
-            this.Visibility = Visibility.Hidden;
             helpPage.ShowDialog();
-            this.Visibility = Visibility.Visible;
         }
 
+        //Exit the application
         private void Quit(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

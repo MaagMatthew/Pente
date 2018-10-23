@@ -24,6 +24,7 @@ namespace Pente
             InitializeComponent();
         }
 
+        //Close the window
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();

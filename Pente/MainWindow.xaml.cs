@@ -23,12 +23,12 @@ namespace Pente
     /// </summary>
     public partial class MainWindow : Window
     {
-        GameBoard game;
-        DispatcherTimer time;
+        private GameBoard game;
+        private DispatcherTimer time;
 
-        public static int countdownFrom = 20;
+        private static int countdownFrom = 20;
 
-        public int timerValue = countdownFrom;
+        private int timerValue = countdownFrom;
 
         public MainWindow(int GridSize, string player1Name, string player2Name, bool isCpuEnabled)
         {
@@ -45,7 +45,8 @@ namespace Pente
             TxtBx_Timer.Text = countdownFrom.ToString();
         }
 
-        public void PlaceBoard(GameBoard game)
+        //Put a new board in the middle of the grid
+        private void PlaceBoard(GameBoard game)
         {
             Grid.SetColumn(game,1);
             Grid.SetRow(game,1);
@@ -54,17 +55,20 @@ namespace Pente
             boardView.Children.Add(game);            
         }
 
-        public  void SetNames(string p1,string p2)
+        //Display Names
+        private void SetNames(string p1,string p2)
         {
             TxtBx_FirstPlayer.Text = p1;
             TxtBx_SecondPlayer.Text = p2;
         }
 
-        public void StartTimer()
+        //Start timer
+        private void StartTimer()
         {
             time.Start();
         }
 
+        //Make the timer tick and end turn if at 0 seconds
         private void UpdateTimer(object sender = null, EventArgs e = null)
         {
             if (timerValue > 0)
@@ -74,12 +78,14 @@ namespace Pente
             
             if (timerValue == 0)
             {
+                game.SwitchTurn();
                 RestartTimer();
             }
 
             TxtBx_Timer.Text = timerValue.ToString();
         }
 
+        //Recieves information from the GameBoard class and display whos turn it is now and if there is tessera/tria
         private void NotifyNameChange(object sender, EventArgs e)
         {
             TxtBx_Notifications.Text = "";
@@ -103,6 +109,7 @@ namespace Pente
             RestartTimer();
         }
 
+        //Recieves information that the game has ended and declare a winner
         private void NotifyGameEnded(object sender, EventArgs e)
         {
             if (game._HasWinner)
@@ -118,13 +125,7 @@ namespace Pente
             }
         }
 
-        private void TimerEnded()
-        {
-            TxtBx_Notifications.Text = $"Turn has Ended for {game.CurrentPlayerName}. ";
-            game.SwitchTurn();
-            TxtBx_Notifications.Text += $"{game.CurrentPlayerName} Take your Turn!";
-        }
-
+        //Set the Timer back to 20
         public void RestartTimer()
         {
             if (game._HasWinner == false)
@@ -135,18 +136,21 @@ namespace Pente
             }
         }
 
-        public void CreateTimer()
+        //Create a timer
+        private void CreateTimer()
         {
             time = new DispatcherTimer();
             time.Tick += new EventHandler(UpdateTimer);
             time.Interval = new TimeSpan(0, 0, 0, 1);
         }
 
+        //Return back to settings
         private void Return(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
+        //Show help page
         private void GetHelp(object sender, RoutedEventArgs e)
         {
             Help helpPage = new Help();

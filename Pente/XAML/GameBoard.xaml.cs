@@ -54,16 +54,21 @@ namespace Pente.XAML
         }
         public string _CurrentPlayerName { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
+        
+        //Notify Game Has ended
         public void NotifyGameEnded(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
+
+        //Notify turn has Changed
         public void NotifyPropertyChange(string info)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
         #endregion
         #region Initialization
+        //Creates board
         public GameBoard(int squareSize, string Player1, string Player2, bool isCPUPlaying)
         {
             InitializeComponent();
@@ -303,7 +308,7 @@ namespace Pente.XAML
             }
         }
 
-        public void TakeCPUTurn()
+        private void TakeCPUTurn()
         {
             SwitchTurn();
             Random r = new Random();
@@ -377,7 +382,7 @@ namespace Pente.XAML
         #region Taking Turn(Main,Helper,Check)
         #region Main
         //Check for capture and wins
-        public void CheckWin(Canvas currentCanvas)
+        private void CheckWin(Canvas currentCanvas)
         {
             //Setup
 
@@ -397,7 +402,7 @@ namespace Pente.XAML
             int currentRow = Grid.GetRow(currentCanvas);
             int currentColumn = Grid.GetColumn(currentCanvas);
 
-            Diagnol(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
+            CheckUpLeft(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckDownLeft(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckUpRight(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
             CheckDownRight(currentRow, currentColumn, checkedPositions, friendlyCounter, enemyCounter, enemyPositions, friendlyColor);
@@ -479,7 +484,7 @@ namespace Pente.XAML
         }
 
         //Gets a canvas from a certain Position
-        public Canvas GetCanvas(int column, int row)
+        private Canvas GetCanvas(int column, int row)
         {
             foreach (Border item in gameBoard.Children)
             {
@@ -502,43 +507,6 @@ namespace Pente.XAML
             else
             {
                 return false;
-            }
-        }
-
-        //Get a valid starting point within the board
-        private int Startpoint(int placement)
-        {
-            for (int i = -4; i < 5; i++)
-            {
-                if (IsValidPosition(placement - i))
-                {
-                    return placement - i;
-                }
-            }
-            return -1;
-        }
-
-        //Checks if a player is in a position to capture
-        private void CheckCapture(int nextRow, int nextColumn, int enemyCount, int friendlyCount, SolidColorBrush friendlyColor, List<int> enemyPositions, int playerCount)
-        {
-            //Makes sure 
-            if (enemyCount == 2 && friendlyCount == 1)
-            {
-                if (IsValidPosition(nextColumn) && IsValidPosition(nextRow))
-                {
-                    Canvas nextCanvas = GetCanvas(nextColumn, nextRow);
-                    if (nextCanvas != null)
-                    {
-                        if (HasSameColorStone(friendlyColor, nextCanvas))
-                        {
-                            CaptureStones(enemyPositions);
-                            enemyPositions.Clear();
-                            enemyCount = 0;
-                            friendlyCount = 0;
-                            playerCount = 0;
-                        }
-                    }
-                }
             }
         }
 
@@ -571,72 +539,83 @@ namespace Pente.XAML
         #region Check Methods
 
         //Go through Up a row and Left a column searching for an stone of the same color, enemy stone, or space
-        public void Diagnol(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckUpLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             HasTria = false;
             HasTessera = false;
-            int columnOffset = Startpoint(startRow);
-            int rowOffset = Startpoint(startColumn);
+            int columnOffset = startColumn - 1;
+            int rowOffset = startRow - 1;
             checkedPositions = 0;
             enemyPositions.Clear();
             friendlyCounter = 0;
             enemyCounter = 0;
-            int playerCount = 0;
 
-            while (checkedPositions < 10)
+            while (checkedPositions < 5)
             {
                 checkedPositions++;
 
+                //Makes sure that the spot we are looking in is within the borders
                 if (IsValidPosition(columnOffset) && IsValidPosition(rowOffset))
                 {
+                    //Get the canvas we are looking At
+                    Canvas neighborCanvas = GetCanvas(columnOffset, rowOffset);
 
-                    Canvas neighbor = GetCanvas(columnOffset, rowOffset);
+                    //If its null continue to the next neighbor
+                    //If the canvas has the same color stone add to friendly count
+                    ////If there was an two enemies between start point and the fourth *In Palatine Voice* kill'em...kill'em now....do it
+                    //if the canvas has the enemy color stone add to enemy count and add positsions
 
-                    if (neighbor != null)
+                    if (neighborCanvas == null)
                     {
-                        if (HasSameColorStone(friendlyColor, neighbor))
+                        break;
+                    }
+                    else if (HasSameColorStone(friendlyColor, neighborCanvas))
+                    {
+                        friendlyCounter++;
+                        if (checkedPositions == 3 && enemyCounter == 2 && friendlyCounter == 1)
                         {
-                            playerCount++;
-                            friendlyCounter++;
-                            CheckCapture(rowOffset - 1, columnOffset - 1, enemyCounter, friendlyCounter, friendlyColor, enemyPositions, playerCount);
-                            //CheckForCapture;
-                            //CheckForTria();
-                            //CheckForTessera()
+                            CaptureStones(enemyPositions);
                         }
-                        else if (neighbor.Children.Count == 0)
+                        if (checkedPositions == 2 && friendlyCounter == 2)
                         {
-                            playerCount = 0;
-                            enemyPositions.Clear();
-                            enemyCounter = 0;
-                            friendlyCounter = 0;
-                            playerCount = 0;
+                            HasTria = true;
                         }
-                        else if (neighbor.Children.Count != 0)
+                        if (HasTria && checkedPositions == 3)
                         {
-                            enemyPositions.Add(rowOffset);
-                            enemyPositions.Add(columnOffset);
-                            enemyCounter++;
-                            playerCount++;
+                            if (friendlyCounter == 3)
+                            {
+                                HasTria = false;
+                                HasTessera = true;
+                            }
+                        }
+                        if (HasTessera && checkedPositions == 4)
+                        {
+                            if (friendlyCounter == 4)
+                            {
+                                HasWinner = true;
+                                HasTessera = false;
+                            }
                         }
                     }
+                    else if (neighborCanvas.Children.Count != 0)
+                    {
+                        enemyCounter++;
+                        enemyPositions.Add(rowOffset);
+                        enemyPositions.Add(columnOffset);
+                    }
+                    columnOffset--;
+                    rowOffset--;
                 }
                 else
                 {
-                    playerCount = 0;
-                    enemyPositions.Clear();
-                    enemyCounter = 0;
-                    friendlyCounter = 0;
-                    playerCount = 0;
+                    checkedPositions = 6;
                 }
-                columnOffset--;
-                rowOffset--;
             }
         }
 
-
         //Go through Up a row and Right a column searching for an stone of the same color, enemy stone, or space
-        public void CheckUpRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckUpRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
             HasTria = false;
             HasTessera = false;
@@ -707,12 +686,11 @@ namespace Pente.XAML
                 {
                     checkedPositions = 6;
                 }
-
             }
         }
 
         //Go through down a row and left a column searching for an stone of the same color, enemy stone, or space
-        public void CheckDownLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckDownLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn - 1;
@@ -787,7 +765,7 @@ namespace Pente.XAML
         }
 
         //Go through Updown a row and right a column searching for an stone of the same color, enemy stone, or space
-        public void CheckDownRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckDownRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn + 1;
@@ -862,7 +840,7 @@ namespace Pente.XAML
         }
 
         //Go through directly left searching for an stone of the same color, enemy stone, or space
-        public void CheckLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckLeft(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn - 1;
@@ -936,7 +914,7 @@ namespace Pente.XAML
         }
 
         //Go through directly right searching for an stone of the same color, enemy stone, or space
-        public void CheckRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckRight(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn + 1;
@@ -1010,7 +988,7 @@ namespace Pente.XAML
         }
 
         //Go through directly up searching for an stone of the same color, enemy stone, or space
-        public void CheckUp(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckUp(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn;
@@ -1084,7 +1062,7 @@ namespace Pente.XAML
         }
 
         //Go through directly down searching for an stone of the same color, enemy stone, or space
-        public void CheckDown(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
+        private void CheckDown(int startRow, int startColumn, int checkedPositions, int friendlyCounter, int enemyCounter, List<int> enemyPositions, SolidColorBrush friendlyColor)
         {
 
             int columnOffset = startColumn;

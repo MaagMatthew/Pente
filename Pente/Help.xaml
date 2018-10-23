@@ -22,9 +22,11 @@
         <TextBlock Text="Playing Pente" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
         <ListBox Background="Black" Foreground="#cae807" Grid.Row="1">
             <TextBlock Text="Objective" FontSize="24" Margin="20,5,0,10"></TextBlock>
-            <TextBlock Text="Have 5 stones connectting in a row(Vertical, Horizontal, or Diagnol)" Margin="50,5,0,20"></TextBlock>
+            <TextBlock Text="Have 5 stones connectting in a row(Vertical, Horizontal, or Diagnal)" Margin="50,5,0,20"></TextBlock>
+            <TextBlock Text="Capture enemy pieces 5 times" Margin="50,5,0,20"></TextBlock>
             <TextBlock Text="Rules" FontSize="24" Margin="20,5,0,10"></TextBlock>
             <TextBlock Text="Each Player Takes a turn placing one stone." Margin="50,5,0,10"></TextBlock>
+            <TextBlock Text="Second Player May not place a stone within 3 squares of the center on their first turn." Margin="50,5,0,10"></TextBlock>
             <TextBlock Text="Once A player Places down a stone they cannot remove it and the turn is Passed." Margin="50,5,0,20"></TextBlock>
             <TextBlock Text="How To Play" FontSize="24" Margin="20,5,0,20"></TextBlock>
             <TextBlock Text="Left Click to Place Down A stone." Margin="50,5,0,20"></TextBlock>
